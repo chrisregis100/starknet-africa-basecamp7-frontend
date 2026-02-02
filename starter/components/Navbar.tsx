@@ -2,14 +2,14 @@
 
 import React, { useState } from "react";
 import { Button } from "./ui/button";
-import { useWallet } from "@/context/WalletContext";
 import { ConnectModal } from "./ConnectModal";
 import { TokenBalance } from "./TokenBalance";
 import { DisconnectModal } from "./DisconnectModal";
 import { Wallet } from "lucide-react";
+import { useAccount } from "@starknet-react/core";
 
 export function Navbar() {
-  const { isConnected, address } = useWallet();
+  const { isConnected, address } = useAccount();
   const [isConnectOpen, setIsConnectOpen] = useState(false);
   const [isDisconnectOpen, setIsDisconnectOpen] = useState(false);
 

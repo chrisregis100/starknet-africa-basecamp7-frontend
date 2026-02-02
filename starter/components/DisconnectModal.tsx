@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { Modal } from "./ui/modal";
-import { useWallet } from "@/context/WalletContext";
 import { Copy, Check, LogOut, Wallet } from "lucide-react";
 import { Button } from "./ui/button";
+import { useAccount, useDisconnect } from "@starknet-react/core";
 
 interface DisconnectModalProps {
   isOpen: boolean;
@@ -12,7 +12,8 @@ interface DisconnectModalProps {
 }
 
 export function DisconnectModal({ isOpen, onClose }: DisconnectModalProps) {
-  const { address, disconnect, walletName } = useWallet();
+  const { address } = useAccount();
+  const { disconnect } = useDisconnect();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -35,7 +36,7 @@ export function DisconnectModal({ isOpen, onClose }: DisconnectModalProps) {
           <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <Wallet className="h-8 w-8 text-primary" />
           </div>
-          <p className="text-sm text-muted-foreground mb-1">Connected with {walletName}</p>
+          <p className="text-sm text-muted-foreground mb-1">Connected</p>
           <div className="flex items-center gap-2 bg-background px-3 py-1.5 rounded-full border">
             <span className="font-mono text-sm">
               {address?.slice(0, 6)}...{address?.slice(-4)}
@@ -44,7 +45,11 @@ export function DisconnectModal({ isOpen, onClose }: DisconnectModalProps) {
               onClick={handleCopy}
               className="ml-1 p-1 hover:bg-muted rounded-full transition-colors"
             >
-              {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5 text-muted-foreground" />}
+              {copied ? (
+                <Check className="h-3.5 w-3.5 text-green-500" />
+              ) : (
+                <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+              )}
             </button>
           </div>
         </div>

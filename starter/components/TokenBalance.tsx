@@ -2,27 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { useWallet } from "../context/WalletContext";
+import { useAccount, useBalance } from "@starknet-react/core";
+import { STRK_SEPOLIA } from "@/lib/coins";
 
 export function TokenBalance() {
-  const { isConnected } = useWallet();
+  const { address, isConnected } = useAccount();
   const [balance, setBalance] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (isConnected) {
-      setLoading(true);
-      // Simulate network request
-      const timer = setTimeout(() => {
-        setBalance("1,000.00");
-        setLoading(false);
-      }, 1500);
-
-      return () => clearTimeout(timer);
-    } else {
-      setBalance(null);
-    }
-  }, [isConnected]);
+  const { data, isLoading: loading } = useBalance({
+    token: STRK_SEPOLIA,
+    address,
+    refetchInterval: 5000,
+    watch: true,
+  });
 
   if (!isConnected) return null;
 
@@ -49,7 +40,9 @@ export function TokenBalance() {
           height={20}
         />
       </div>
-      <span className="text-sm font-medium font-mono">{balance} STRK</span>
+      <span className="text-sm font-medium font-mono">
+        {parseFloat(data!.formatted).toFixed(2)} STRK
+      </span>
     </div>
   );
 }
