@@ -1,8 +1,6 @@
 "use client";
 
 import { COUNTER_ABI } from "@/abi/counter_abi";
-import { DecreaseButton } from "@/components/DecreaseButton";
-import { IncreaseButton } from "@/components/IncreaseButton";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { COUNTER_CONTRACT_ADDRESS, myProvider } from "@/lib/utils";
@@ -19,6 +17,7 @@ import { Abi, Contract, PaymasterRpc } from "starknet";
 
 export default function Home() {
   const [counter, setCount] = useState(0);
+  const [increaseAmount, setIncreaseAmount] = useState(1);
 
   const {
     data: count,
@@ -42,14 +41,14 @@ export default function Home() {
   const { send: increase, error } = useSendTransaction({
     calls:
       contract && address
-        ? [contract.populate("increase_count_by_one", [])]
+        ? [contract.populate("increase_count", [increaseAmount])]
         : undefined,
   });
 
   const { send: decrease } = useSendTransaction({
     calls:
       contract && address
-        ? [contract.populate("decrease_count_by_one", [])]
+        ? [contract.populate("decrease_count", [increaseAmount])]
         : undefined,
   });
 
@@ -77,26 +76,42 @@ export default function Home() {
     headers: { "x-paymaster-api-key": process.env.AVNU_API_KEY },
   });
 
-  async function executeWithPaymaster() {
-    // Execute any transaction - gas is paid from your credits
-    if (!account || !contract) return;
+  // async function executeWithPaymaster() {
+  //   // Execute any transaction - gas is paid from your credits
+  //   if (!account || !contract) return;
 
-    const result = await account.execute(
-      [contract.populate("increase_count_by_one", [])],
+  //   const feeDetails: PaymasterDetails = {
+  //     feeMode: {
+  //       mode: "default",
+  //       gasToken: USDC_SEPOLIA,
+  //     },
+  //   };
 
-      {
-        paymaster: {
-          provider: paymaster,
-          params: {
-            version: "0x1",
-            feeMode: { mode: "sponsored" }, // You sponsor, user pays nothing
-          },
-        },
-      },
-    );
+  //   const feeEstimation = await account?.estimatePaymasterTransactionFee(
+  //     [
+  //       {
+  //         contractAddress: COUNTER_CONTRACT_ADDRESS,
+  //         entrypoint: "increase_count_by_one",
+  //         calldata: [String(increaseAmount)],
+  //       },
+  //     ],
+  //     feeDetails,
+  //   );
 
-    return result;
-  }
+  //   const result = await account.executePaymasterTransaction(
+  //     [
+  //       {
+  //         contractAddress: COUNTER_CONTRACT_ADDRESS,
+  //         entrypoint: "increase_count_by_one",
+  //         calldata: [String(increaseAmount)],
+  //       },
+  //     ],
+  //     feeDetails,
+  //     feeEstimation?.suggested_max_fee_in_gas_token,
+  //   );
+
+  //   return result;
+  // }
 
   const handleDecrease = () => decrease();
   const handleIncrease = () => increase();
@@ -138,23 +153,52 @@ export default function Home() {
             </AnimatePresence>
           </div>
 
-          <div className="flex items-center gap-6">
-            <DecreaseButton onClick={handleDecrease} />
+          <div className="w-full space-y-6">
+            <div className="space-y-3">
+              <label
+                htmlFor="increase-amount"
+                className="text-sm font-medium block"
+              >
+                Amount:
+              </label>
+              <input
+                id="increase-amount"
+                type="number"
+                min="1"
+                value={increaseAmount}
+                onChange={(e) => setIncreaseAmount(Number(e.target.value) || 1)}
+                className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <Button
+                onClick={handleIncrease}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2 rounded-lg transition-all"
+              >
+                Increase count by {increaseAmount}
+              </Button>
+              <Button
+                onClick={handleDecrease}
+                variant="outline"
+                className="w-full border-2 hover:bg-destructive/10 font-medium py-2 rounded-lg transition-all"
+              >
+                Decrease count by {increaseAmount}
+              </Button>
+            </div>
 
             <Button
               onClick={() => refetchCount()}
               variant="secondary"
-              size="icon"
-              className="h-12 w-12 rounded-full hover:rotate-180 transition-transform duration-500"
+              className="w-full hover:rotate-180 transition-transform duration-500"
             >
               {isFetching ? (
-                <RotateCcw className="h-5 w-5" />
+                <RotateCcw className="h-5 w-5 mr-2" />
               ) : (
-                <RefreshCcw className="h-5 w-5" />
+                <RefreshCcw className="h-5 w-5 mr-2" />
               )}
+              Refresh
             </Button>
-
-            <IncreaseButton onClick={handleIncrease} />
           </div>
         </div>
       </div>
