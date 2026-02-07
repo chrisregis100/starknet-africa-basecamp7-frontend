@@ -31,6 +31,7 @@ export function StarknetProvider({ children }: { children: React.ReactNode }) {
         },
       })}
       connectors={connectors}
+      autoConnect={true}
       explorer={voyager}
       paymasterProvider={paymasterRpcProvider({
         rpc: () => {

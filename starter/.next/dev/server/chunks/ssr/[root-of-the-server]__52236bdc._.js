@@ -49,6 +49,7 @@ function StarknetProvider({ children }) {
             }
         }),
         connectors: connectors,
+        autoConnect: true,
         explorer: __TURBOPACK__imported__module__$5b$project$5d2f$starter$2f$node_modules$2f40$starknet$2d$react$2f$core$2f$dist$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["voyager"],
         paymasterProvider: (0, __TURBOPACK__imported__module__$5b$project$5d2f$starter$2f$node_modules$2f40$starknet$2d$react$2f$core$2f$dist$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["paymasterRpcProvider"])({
             rpc: ()=>{

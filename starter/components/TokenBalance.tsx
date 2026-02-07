@@ -4,12 +4,10 @@ import { STRK_SEPOLIA } from "@/lib/coins";
 import { useAccount, useBalance } from "@starknet-react/core";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
 // import { useWallet } from "../context/WalletContext";
 
 export function TokenBalance() {
-  const isConnected = true;
-=  const { address, status } = useAccount();
+  const { address } = useAccount();
 
   const { data, isLoading: loading } = useBalance({
     token: STRK_SEPOLIA,
@@ -18,7 +16,7 @@ export function TokenBalance() {
     watch: true,
   });
 
-  console.log(data);
+  const isBalanceLoading = loading || !data;
 
   // useEffect(() => {
   //   if (status === "disconnected") {
@@ -28,7 +26,9 @@ export function TokenBalance() {
   //   }
   // }, [address, status]);
 
-  if (loading) {
+  if (!address) return null;
+
+  if (isBalanceLoading) {
     return (
       <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-full border border-border/50">
         <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />

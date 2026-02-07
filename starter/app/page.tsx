@@ -11,13 +11,14 @@ import {
   useSendTransaction,
 } from "@starknet-react/core";
 import { AnimatePresence, motion } from "framer-motion";
-import { RefreshCcw, RotateCcw } from "lucide-react";
+import { Loader2, RefreshCcw, RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Abi, Contract, PaymasterRpc } from "starknet";
+import { Abi, Contract } from "starknet";
 
 export default function Home() {
   const [counter, setCount] = useState(0);
   const [increaseAmount, setIncreaseAmount] = useState(1);
+  const [isJsCountLoading, setIsJsCountLoading] = useState(false);
 
   const {
     data: count,
@@ -32,13 +33,13 @@ export default function Home() {
     refetchInterval: 10000,
   });
 
-  const { address, account } = useAccount();
+  const { address } = useAccount();
   const { contract } = useContract({
     abi: COUNTER_ABI as Abi,
     address: COUNTER_CONTRACT_ADDRESS,
   });
 
-  const { send: increase, error } = useSendTransaction({
+  const { send: increase } = useSendTransaction({
     calls:
       contract && address
         ? [contract.populate("increase_count", [increaseAmount])]
@@ -59,9 +60,14 @@ export default function Home() {
       providerOrAccount: myProvider,
     });
 
-    const result = await contract.get_count();
-    console.log("Current count from JS:", result);
-    return result;
+    setIsJsCountLoading(true);
+    try {
+      const result = await contract.get_count();
+      console.log("Current count from JS:", result);
+      return result;
+    } finally {
+      setIsJsCountLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -69,12 +75,6 @@ export default function Home() {
       setCount(Number(res));
     });
   }, []);
-
-  // Initialize paymaster with your API key
-  const paymaster = new PaymasterRpc({
-    nodeUrl: "https://starknet.paymaster.avnu.fi", // or sepolia.paymaster.avnu.fi for testing
-    headers: { "x-paymaster-api-key": process.env.AVNU_API_KEY },
-  });
 
   // async function executeWithPaymaster() {
   //   // Execute any transaction - gas is paid from your credits
@@ -115,7 +115,9 @@ export default function Home() {
 
   const handleDecrease = () => decrease();
   const handleIncrease = () => increase();
-  const handleRefresh = () => setCount(0);
+
+  const isCountLoading = isLoading || isJsCountLoading;
+  const displayedCount = count ?? counter;
 
   return (
     <main className="min-h-screen flex flex-col bg-background selection:bg-primary/20">
@@ -139,18 +141,25 @@ export default function Home() {
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent opacity-50" />
             <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent opacity-50" />
 
-            <AnimatePresence mode="popLayout">
-              <motion.span
-                key={count}
-                initial={{ opacity: 0, y: 20, scale: 0.8 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -20, scale: 0.8 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="text-9xl font-bold tracking-tighter tabular-nums text-foreground drop-shadow-xl"
-              >
-                {count}
-              </motion.span>
-            </AnimatePresence>
+            {isCountLoading ? (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Loader2 className="h-6 w-6 animate-spin" />
+                <span className="text-sm">Loading count...</span>
+              </div>
+            ) : (
+              <AnimatePresence mode="popLayout">
+                <motion.span
+                  key={displayedCount}
+                  initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -20, scale: 0.8 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="text-9xl font-bold tracking-tighter tabular-nums text-foreground drop-shadow-xl"
+                >
+                  {displayedCount}
+                </motion.span>
+              </AnimatePresence>
+            )}
           </div>
 
           <div className="w-full space-y-6">
@@ -167,6 +176,7 @@ export default function Home() {
                 min="1"
                 value={increaseAmount}
                 onChange={(e) => setIncreaseAmount(Number(e.target.value) || 1)}
+                disabled={isCountLoading}
                 className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -174,6 +184,7 @@ export default function Home() {
             <div className="flex flex-col gap-3">
               <Button
                 onClick={handleIncrease}
+                disabled={isCountLoading}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2 rounded-lg transition-all"
               >
                 Increase count by {increaseAmount}
@@ -181,6 +192,7 @@ export default function Home() {
               <Button
                 onClick={handleDecrease}
                 variant="outline"
+                disabled={isCountLoading}
                 className="w-full border-2 hover:bg-destructive/10 font-medium py-2 rounded-lg transition-all"
               >
                 Decrease count by {increaseAmount}
@@ -190,7 +202,8 @@ export default function Home() {
             <Button
               onClick={() => refetchCount()}
               variant="secondary"
-              className="w-full hover:rotate-180 transition-transform duration-500"
+              disabled={isCountLoading}
+              className="w-full transition-transform duration-500"
             >
               {isFetching ? (
                 <RotateCcw className="h-5 w-5 mr-2" />
