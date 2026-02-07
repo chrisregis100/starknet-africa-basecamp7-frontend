@@ -1,0 +1,220 @@
+[00:00:08.227] Server  LOG     ✓ Ready in 6.4s
+[00:00:24.688] Server  LOG     ○ Compiling / ...
+[00:00:30.922] Browser LOG     Current count from JS: 15
+[00:06:56.682] Server  LOG     ✓ Compiled in 1344ms
+[00:08:34.159] Browser ERROR   unhandledRejection: Error: Failed to fetch
+[00:11:44.377] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/starter/a...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <script>
+                      <script>
+                      <script>
+                      <script>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="en">
+                          <body
+                            className="inter_5972bc34-module__OU16Qa__className min-h-screen bg-background text-foregr..."
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[00:11:45.281] Browser LOG     Current count from JS: 15
+[00:12:29.921] Server  LOG     ✓ Compiled in 597ms
+[00:13:15.746] Server  LOG     ✓ Compiled in 1055ms
+[00:13:36.208] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="/starter/a...">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <script>
+                      <script>
+                      <script>
+                      <script>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="en">
+                          <body
+                            className="inter_5972bc34-module__OU16Qa__className min-h-screen bg-background text-foregr..."
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[00:13:37.124] Browser LOG     Current count from JS: 15
+[00:13:57.206] Browser LOG     Current count from JS: 15
+[00:21:02.735] Server  LOG     ✓ Compiled in 1123ms
+[00:21:04.273] Browser ERROR   uncaughtError: ReferenceError: abi is not defined
+[00:21:22.792] Server  LOG     ✓ Finished filesystem cache database compaction in 13.6s
+[00:22:05.692] Server  LOG     ✓ Compiled in 333ms
+[00:22:05.699] Server  WARN    ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:23:03.821] Browser LOG     Current count from JS: 15
+[00:23:35.566] Server  LOG     ✓ Compiled in 516ms
+[00:24:04.984] Server  LOG     ✓ Compiled in 761ms
+[00:28:03.098] Server  LOG     ✓ Compiled in 669ms
+[00:28:04.331] Browser LOG     Current count from JS: 15
+[00:30:14.906] Server  LOG     ✓ Compiled in 245ms
+[00:33:55.523] Server  LOG     ✓ Compiled in 315ms
+[00:33:56.269] Browser ERROR   ./starter/app/page.tsx:49:27
+Ecmascript file had an error
+  47 |   });
+  48 |
+> 49 |   const { send: decrease, error } = useSendTransaction({
+     |                           ^^^^^
+  50 |     calls:
+  51 |       contract && address
+  52 |         ? [contract.populate("decrease_count_by_one", [])]
+
+the name `error` is defined multiple times
+
+Import traces:
+  Client Component Browser:
+    ./starter/app/page.tsx [Client Component Browser]
+    ./starter/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./starter/app/page.tsx [Client Component SSR]
+    ./starter/app/page.tsx [Server Component]
+[00:36:08.500] Server  LOG     ✓ Compiled in 4.1s
+[00:36:09.177] Browser ERROR   ./starter/app/page.tsx:49:27
+Ecmascript file had an error
+  47 |   });
+  48 |
+> 49 |   const { send: decrease, error } = useSendTransaction({
+     |                           ^^^^^
+  50 |     calls:
+  51 |       contract && address
+  52 |         ? [contract.populate("decrease_count_by_one", [])]
+
+the name `error` is defined multiple times
+
+Import traces:
+  Client Component Browser:
+    ./starter/app/page.tsx [Client Component Browser]
+    ./starter/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./starter/app/page.tsx [Client Component SSR]
+    ./starter/app/page.tsx [Server Component]
+[00:36:43.502] Server  LOG     ✓ Compiled in 562ms
+[00:36:48.376] Browser LOG     Current count from JS: 17
+[00:47:37.090] Server  LOG     ✓ Compiled in 573ms
+[00:47:38.514] Browser ERROR   ./starter/app/page.tsx:82:18
+Parsing ecmascript source code failed
+  80 |
+  81 |   // Execute any transaction - gas is paid from your credits
+> 82 |   const result = await account.execute(calls, {
+     |                  ^^^^^
+  83 |     paymaster: {
+  84 |       provider: paymaster,
+  85 |       params: {
+
+await isn't allowed in non-async function
+
+Import traces:
+  Client Component Browser:
+    ./starter/app/page.tsx [Client Component Browser]
+    ./starter/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./starter/app/page.tsx [Client Component SSR]
+    ./starter/app/page.tsx [Server Component]
+[00:49:24.537] Server  LOG     ✓ Compiled in 1683ms
+[00:51:05.314] Server  LOG     ✓ Compiled in 123ms
+[00:51:27.810] Server  LOG     ✓ Compiled in 331ms
+[00:52:17.204] Server  LOG     ✓ Compiled in 447ms
+[00:52:35.059] Server  LOG     ✓ Compiled in 782ms
+[00:53:32.773] Server  LOG     ✓ Compiled in 134ms
+[00:54:20.098] Server  LOG     ✓ Compiled in 358ms
+[00:54:56.386] Browser ERROR   ./starter/app/page.tsx:85:10
+Parsing ecmascript source code failed
+  83 |
+  84 |     const result = await account.execute(calls, {
+> 85 |       if(!account) return;
+     |          ^
+  86 |       paymaster: {
+  87 |         provider: paymaster,
+  88 |         params: {
+
+Unexpected token `!`. Expected yield, an identifier, [ or {
+
+Import traces:
+  Client Component Browser:
+    ./starter/app/page.tsx [Client Component Browser]
+    ./starter/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./starter/app/page.tsx [Client Component SSR]
+    ./starter/app/page.tsx [Server Component]
+[00:54:56.387] Browser LOG     Current count from JS: 16
+[00:54:56.387] Browser ERROR   ./starter/app/page.tsx:87:21
+Parsing ecmascript source code failed
+  85 |     const result = await account.execute( contract && address
+  86 |         ? [contract.populate("increase_count_by_one", [])]
+> 87 |         : undefined,, {
+     |                     ^
+  88 |       paymaster: {
+  89 |         provider: paymaster,
+  90 |         params: {
+
+Expression expected
+
+Import traces:
+  Client Component Browser:
+    ./starter/app/page.tsx [Client Component Browser]
+    ./starter/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./starter/app/page.tsx [Client Component SSR]
+    ./starter/app/page.tsx [Server Component]
+[00:55:25.790] Server  LOG     ✓ Compiled in 242ms
+[00:55:36.198] Server  LOG     ✓ Compiled in 412ms

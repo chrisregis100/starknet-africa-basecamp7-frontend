@@ -1,18 +1,105 @@
 "use client";
 
-import React, { useState } from "react";
+import { COUNTER_ABI } from "@/abi/counter_abi";
+import { DecreaseButton } from "@/components/DecreaseButton";
+import { IncreaseButton } from "@/components/IncreaseButton";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import { Plus, Minus, RotateCcw } from "lucide-react";
-import { IncreaseButton } from "@/components/IncreaseButton";
-import { DecreaseButton } from "@/components/DecreaseButton";
-import { motion, AnimatePresence } from "framer-motion";
+import { COUNTER_CONTRACT_ADDRESS, myProvider } from "@/lib/utils";
+import {
+  useAccount,
+  useContract,
+  useReadContract,
+  useSendTransaction,
+} from "@starknet-react/core";
+import { AnimatePresence, motion } from "framer-motion";
+import { RefreshCcw, RotateCcw } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Abi, Contract, PaymasterRpc } from "starknet";
 
 export default function Home() {
-  const [count, setCount] = useState(0);
+  const [counter, setCount] = useState(0);
 
-  const handleDecrease = () => setCount((prev) => (prev > 0 ? prev - 1 : 0));
-  const handleIncrease = () => setCount((prev) => prev + 1);
+  const {
+    data: count,
+    isLoading,
+    refetch: refetchCount,
+    isFetching,
+  } = useReadContract({
+    abi: COUNTER_ABI as Abi,
+    address: COUNTER_CONTRACT_ADDRESS,
+    functionName: "get_count",
+    args: [],
+    refetchInterval: 10000,
+  });
+
+  const { address, account } = useAccount();
+  const { contract } = useContract({
+    abi: COUNTER_ABI as Abi,
+    address: COUNTER_CONTRACT_ADDRESS,
+  });
+
+  const { send: increase, error } = useSendTransaction({
+    calls:
+      contract && address
+        ? [contract.populate("increase_count_by_one", [])]
+        : undefined,
+  });
+
+  const { send: decrease } = useSendTransaction({
+    calls:
+      contract && address
+        ? [contract.populate("decrease_count_by_one", [])]
+        : undefined,
+  });
+
+  async function getjsCount() {
+    const contract = new Contract({
+      abi: COUNTER_ABI,
+      address: COUNTER_CONTRACT_ADDRESS,
+      providerOrAccount: myProvider,
+    });
+
+    const result = await contract.get_count();
+    console.log("Current count from JS:", result);
+    return result;
+  }
+
+  useEffect(() => {
+    getjsCount().then((res) => {
+      setCount(Number(res));
+    });
+  }, []);
+
+  // Initialize paymaster with your API key
+  const paymaster = new PaymasterRpc({
+    nodeUrl: "https://starknet.paymaster.avnu.fi", // or sepolia.paymaster.avnu.fi for testing
+    headers: { "x-paymaster-api-key": process.env.AVNU_API_KEY },
+  });
+
+  async function executeWithPaymaster() {
+    // Execute any transaction - gas is paid from your credits
+    if (!account || !contract) return;
+
+    const result = await account.execute(
+      [contract.populate("increase_count_by_one", [])],
+
+      {
+        paymaster: {
+          provider: paymaster,
+          params: {
+            version: "0x1",
+            feeMode: { mode: "sponsored" }, // You sponsor, user pays nothing
+          },
+        },
+      },
+    );
+
+    return result;
+  }
+
+  const handleDecrease = () => decrease();
+  const handleIncrease = () => increase();
   const handleRefresh = () => setCount(0);
 
   return (
@@ -55,12 +142,16 @@ export default function Home() {
             <DecreaseButton onClick={handleDecrease} />
 
             <Button
-              onClick={handleRefresh}
+              onClick={() => refetchCount()}
               variant="secondary"
               size="icon"
               className="h-12 w-12 rounded-full hover:rotate-180 transition-transform duration-500"
             >
-              <RotateCcw className="h-5 w-5" />
+              {isFetching ? (
+                <RotateCcw className="h-5 w-5" />
+              ) : (
+                <RefreshCcw className="h-5 w-5" />
+              )}
             </Button>
 
             <IncreaseButton onClick={handleIncrease} />

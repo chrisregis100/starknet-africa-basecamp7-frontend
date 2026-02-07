@@ -1,30 +1,48 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { STRK_SEPOLIA } from "@/lib/coins";
+import { useAccount, useBalance } from "@starknet-react/core";
 import { Loader2 } from "lucide-react";
-import { useWallet } from "../context/WalletContext";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+// import { useWallet } from "../context/WalletContext";
 
 export function TokenBalance() {
-  const { isConnected } = useWallet();
+  const isConnected = true;
   const [balance, setBalance] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { address, status } = useAccount();
+
+  const { data, isLoading: loading } = useBalance({
+    token: STRK_SEPOLIA,
+    address: address,
+    refetchInterval: 5000,
+    watch: true,
+  });
+
+  // useEffect(() => {
+  //   if (isConnected) {
+  //     setLoading(true);
+  //     // Simulate network request
+  //     const timer = setTimeout(() => {
+  //       setBalance("1,000.00");
+  //       setLoading(false);
+  //     }, 1500);
+
+  //     return () => clearTimeout(timer);
+  //   } else {
+  //     setBalance(null);
+  //   }
+  // }, [isConnected]);
+
+  // if (!isConnected) return null;
 
   useEffect(() => {
-    if (isConnected) {
-      setLoading(true);
-      // Simulate network request
-      const timer = setTimeout(() => {
-        setBalance("1,000.00");
-        setLoading(false);
-      }, 1500);
-
-      return () => clearTimeout(timer);
-    } else {
-      setBalance(null);
+    if (status === "disconnected") {
+      // on disconnect
+    } else if (status === "connected") {
+      // on connect
     }
-  }, [isConnected]);
-
-  if (!isConnected) return null;
+  }, [address, status]);
 
   if (loading) {
     return (
@@ -42,14 +60,16 @@ export function TokenBalance() {
   return (
     <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary/50 rounded-full border border-border/50 hover:bg-secondary/70 transition-colors">
       <div className="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center">
-        <img
+        <Image
           src="/starknetlogo.svg"
           alt="Starknet Logo"
           width={20}
           height={20}
         />
       </div>
-      <span className="text-sm font-medium font-mono">{balance} STRK</span>
+      <span className="text-sm font-medium font-mono">
+        {parseFloat(data?.formatted || "0").toFixed(2)} STRK
+      </span>
     </div>
   );
 }
